@@ -62,7 +62,8 @@ Book = require('./models/books');
 ** Connect to MongoDB with Mongoose 
 **/
 var dbserver = 'mongodb://localhost';
-var dbname = '/bookstore'
+var dbname = '/bookstore';
+
 mongoose.connect(dbserver + dbname, function(err, data){
     if (err) {
         console.log("***No connection to database.  Stop the node server 'CTRL+C' and run 'mongod' in another window to start the Mongo DB.***");
@@ -402,8 +403,10 @@ app.use (function(req, res) {
 ** Listen to port 
 **/
 //Get the environment variables we need.
-var port    = process.env.PORT || 8080;
-app.listen(port);
+var env = process.env.NODE_ENV || 'development';
+var config = require('./config')[env];
+var port   = config.server.port;
+    app.listen(config.server.port);
 
-console.log('Running on port '+port+'...');
+    console.log('Running on port '+port+'...');
 
