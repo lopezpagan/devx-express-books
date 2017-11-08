@@ -1,0 +1,18 @@
+<%- include("../_header"); %>
+    <article>
+        <header> 
+            <h3> <%= page_title %> [<a href="/book/add">New book</a>] </h3>
+            <p>  <%= page_desc %> </p>
+        </header>
+        
+        <div class="list">
+            <ul> 
+            <% books.forEach(function(book) { %>
+                <li>
+                    <a href="/books/<%= book._id %>"><%= book.title %></a> - <%= book.create_date %>
+                </li>
+            <% }); %>
+            </ul>
+        </div>
+    </article>
+<%- include("../_footer"); %>

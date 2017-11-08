@@ -1,0 +1,18 @@
+<%- include("../_header"); %>
+    <article>
+        <header> 
+            <h3> <%= page_title %> [<a href="/genre/add">New genre</a>] </h3>
+            <p>  <%= page_desc %> </p>
+        </header>
+        
+        <div class="list">
+            <ul> 
+            <% genres.forEach(function(genre) { %>
+                <li>
+                    <a href="/genres/<%= genre._id %>"><%= genre.name %></a>
+                </li>
+            <% }); %>
+            </ul>
+        </div>
+    </article>
+<%- include("../_footer"); %>

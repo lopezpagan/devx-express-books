@@ -1,0 +1,19 @@
+<%- include("../_header"); %>
+    <article>
+        <header> 
+            <h3> <%= page_title %> </h3>
+            <p>  <%= page_desc %> </p>
+        </header>
+        
+        <div class="list">
+            <ul> 
+                <li> Id: <%= genre._id %> </li>
+                <li> Genre: <%= genre.name %> </li>
+                <li> Date Created: <%= genre.create_date %> </li>
+            </ul>
+            <p>
+                <a href="/genre/del/<%= genre._id %>" class="btn btn-danger btn-sm">Delete this genre</a>
+            </p>
+        </div>
+    </article>
+<%- include("../_footer"); %>

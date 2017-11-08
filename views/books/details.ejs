@@ -1,0 +1,27 @@
+<%- include("../_header"); %>
+    <article>
+        <header> 
+            <h3> <%= page_title %> </h3>
+            <p>  <%= page_desc %> </p>
+        </header>
+        
+        <div class="list">
+            <p><img src="/uploads/<%= book.img_url %>" style="max-width: 280px;" /></p>
+            <ul> 
+                <li> Id: <%= book._id %> </li>
+                <li> Title: <%= book.title %> </li>
+                <li> Genre: <%= book.genre %> </li>
+                <li> Description: <%= book.description %> </li>
+                <li> Author: <%= book.author %> </li>
+                <li> Publisher: <%= book.publisher %> </li>
+                <li> Pages: <%= book.pages %> </li>
+                <li> Image: <%= book.img_url %> </li>
+                <li> Buy it! <%= book.buy_url %> </li>
+                <li> Date Created: <%= book.create_date %> </li>
+            </ul>
+            <p>
+                <a href="/book/del/<%= book._id %>" class="btn btn-danger btn-sm">Delete this book</a>
+            </p>
+        </div>
+    </article>
+<%- include("../_footer"); %>
