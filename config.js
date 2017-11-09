@@ -11,7 +11,7 @@ var config = {
         //server details
         server: {
             host: 'localhost',
-            port: '3000'
+            port: '3100'
         }
     },
     production: {
@@ -26,7 +26,7 @@ var config = {
         //server details
         server: {
             host:   'localhost',
-            port:   '3000'
+            port:   '3100'
         }
     }
 };

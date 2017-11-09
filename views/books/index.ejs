@@ -7,11 +7,13 @@
         
         <div class="list">
             <ul> 
+            
             <% books.forEach(function(book) { %>
                 <li>
-                    <a href="/books/<%= book._id %>"><%= book.title %></a> - <%= book.create_date %>
+                    <a href="/books/<%= book.id %>"><%= book.title %></a> - <%= book.create_date %>
                 </li>
             <% }); %>
+            
             </ul>
         </div>
     </article>

@@ -6,6 +6,13 @@ var mongoose = require('mongoose');
 var logger = require('morgan');
 var fs = require('fs');
 
+var request = require('request');
+var options = {
+  host: 'localhost',
+  port: '3000',
+  path: '/books'
+};
+
 
 /**
 ** Create Headers to give access 
@@ -29,16 +36,6 @@ app.set('views', path.join(__dirname, 'views'));
 var multer = require('multer');
 var upload = multer({dest: 'uploads/'});
 
-/*var storage = multer.diskStorage({
-   destination: function(req, file, cb) {
-       cb(null, 'public/uploads/');
-   },
-    filename: function(req, file, cb) {
-        cb(null, Date.now() + file.originalname);
-    }
-});
-var upload = multer({ storage: storage });*/
-
 /**
 ** Make public folder available 
 **/
@@ -53,69 +50,75 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 /**
-** Import Models 
-**/
-Genre = require('./models/genres');
-Book = require('./models/books');
-
-/**
-** Connect to MongoDB with Mongoose 
-**/
-var dbserver = 'mongodb://localhost';
-var dbname = '/bookstore';
-
-mongoose.connect(dbserver + dbname, function(err, data){
-    if (err) {
-        console.log("***No connection to database.  Stop the node server 'CTRL+C' and run 'mongod' in another window to start the Mongo DB.***");
-        //throw err;
-        //return next();
-    }
-});
-var db = mongoose.connection;
-
-/**
 ** Routes
 **/
-app.get('/', function(req, res) {
+var books = {}; 
+
+app.get('/', function(req, res) { 
+    
+    request.get('http://'+options.host + ':' + options.port + options.path, function(err,rs,body){
+      //if(err) //TODO: handle err
+      //if(res.statusCode !== 200 ) //etc
+      //TODO Do something with response
+          books = rs.body;
+          console.log(rs.body);
+    });   
+    
     res.render('index', {
-        title: 'DevX Lab Books in Express and MongoDB', 
+        title: 'DevX Lab Books in Express and JsonDB', 
         description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius pariatur veritatis fugit vero deserunt omnis quas, voluptas maxime, non commodi, asperiores quis cum autem rerum. Excepturi provident aliquid, praesentium dolore.',
         page_title: 'Homepage',
         page_desc: '',
+        books: books
     });
+    
 });
 
 app.get ('/books', function(req, res) {
-    Book.getBooks(function(err, books){
+    
+    request.get('http://'+options.host + ':' + options.port + options.path, function(err,rs,body) {
+      //if(err) //TODO: handle err
+      //if(res.statusCode !== 200 ) //etc
+      //TODO Do something with response
+          books = JSON.parse(rs.body);
+          ///console.log( books );
+        
        if (err){
            throw err;
        } 
-        
+    
         res.render('books/index', {
-            title: 'DevX Lab Books in Express and MongoDB', 
+            title: 'DevX Lab Books in Express and JsonDB', 
             description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius pariatur veritatis fugit vero deserunt omnis quas, voluptas maxime, non commodi, asperiores quis cum autem rerum. Excepturi provident aliquid, praesentium dolore.',
             page_title: 'Books Listing',
             page_desc: '', 
             books: books
         });
-    }, {create_date: -1}, 0); 
+    }); 
+    
 });
 
 app.get ('/books/:_id', function(req, res){
-    Book.getBookById(req.params._id, function(err, book){
+    
+    request.get('http://'+options.host + ':' + options.port + options.path + '/'+req.params._id, function(err,rs,body) {
+      //if(err) //TODO: handle err
+      //if(res.statusCode !== 200 ) //etc
+      //TODO Do something with response
+          book = JSON.parse(rs.body);
+          ///console.log( books );
+        
        if (err){
            throw err;
        } 
-        console.log(book);
-        
+    
         res.render('books/details', {
-            title: 'DevX Lab Books in Express and MongoDB', 
+            title: 'DevX Lab Books in Express and JsonDB', 
             description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius pariatur veritatis fugit vero deserunt omnis quas, voluptas maxime, non commodi, asperiores quis cum autem rerum. Excepturi provident aliquid, praesentium dolore.',
-            page_title: 'Book Details',
+            page_title: 'Books Listing',
             page_desc: '', 
             book: book
         });
-    });
+    }); 
 });
 
 app.get ('/book/del/:_id', function(req, res){
@@ -134,7 +137,7 @@ app.get ('/book/del/:_id', function(req, res){
 app.get ('/book/add', function(req, res){
         
     res.render('books/add', {
-        title: 'DevX Lab Books in Express and MongoDB', 
+        title: 'DevX Lab Books in Express and JsonDB', 
         description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius pariatur veritatis fugit vero deserunt omnis quas, voluptas maxime, non commodi, asperiores quis cum autem rerum. Excepturi provident aliquid, praesentium dolore.',
         page_title: 'Add a Book',
         page_desc: ''
@@ -193,7 +196,7 @@ app.get ('/genres', function(req, res) {
        } 
         
         res.render('genres/index', {
-            title: 'DevX Lab Books in Express and MongoDB', 
+            title: 'DevX Lab Books in Express and JsonDB', 
             description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius pariatur veritatis fugit vero deserunt omnis quas, voluptas maxime, non commodi, asperiores quis cum autem rerum. Excepturi provident aliquid, praesentium dolore.',
             page_title: 'Genres Listing',
             page_desc: '', 
@@ -211,7 +214,7 @@ app.get ('/genres/:_id', function(req, res){
         console.log(genre);
         
         res.render('genres/details', {
-            title: 'DevX Lab Books in Express and MongoDB', 
+            title: 'DevX Lab Books in Express and JsonDB', 
             description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius pariatur veritatis fugit vero deserunt omnis quas, voluptas maxime, non commodi, asperiores quis cum autem rerum. Excepturi provident aliquid, praesentium dolore.',
             page_title: 'Genre Details',
             page_desc: '', 
@@ -236,7 +239,7 @@ app.get ('/genre/del/:_id', function(req, res){
 app.get('/genre/add', function(req, res, next){
     
     res.render('genres/add', {
-        title: 'DevX Lab Books in Express and MongoDB', 
+        title: 'DevX Lab Books in Express and JsonDB', 
         description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius pariatur veritatis fugit vero deserunt omnis quas, voluptas maxime, non commodi, asperiores quis cum autem rerum. Excepturi provident aliquid, praesentium dolore.',
         page_title: 'Add a Genre',
         page_desc: ''
@@ -263,7 +266,7 @@ app.post('/genre/add', function(req, res, next){
            } 
 
             res.json(genres, {
-                title: 'DevX Lab Books in Express and MongoDB', 
+                title: 'DevX Lab Books in Express and JsonDB', 
                 description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius pariatur veritatis fugit vero deserunt omnis quas, voluptas maxime, non commodi, asperiores quis cum autem rerum. Excepturi provident aliquid, praesentium dolore.',
                 page_title: 'Genres Listing',
                 page_desc: '', 
@@ -284,7 +287,7 @@ app.post('/genre/add', function(req, res, next){
 app.get ('/api', function(req, res){
         
     res.render('api/index', {
-        title: 'DevX Lab Books in Express and MongoDB', 
+        title: 'DevX Lab Books in Express and JsonDB', 
         description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius pariatur veritatis fugit vero deserunt omnis quas, voluptas maxime, non commodi, asperiores quis cum autem rerum. Excepturi provident aliquid, praesentium dolore.',
         page_title: 'API Homepage',
         page_desc: ''
@@ -307,62 +310,6 @@ app.get ('/api/genres', function(req, res){
     }, sort, 0);
     
 });
-
-/*app.get ('/api/genres/:sort', function(req, res){
-    var s = req.params.sort;
-    
-    var sort = '{'+ s + ': 1}';
-    
-    Genre.getGenres(function(err, genres){
-        if (err){
-           throw err;
-        } 
-
-        res.json(genres);
-
-        console.log(sort);
-    }, sort, 0);
-    
-});
-
-app.get ('/api/genres/:sort/:by', function(req, res){
-    var s = req.params.sort;
-    var b = parseInt(req.params.by);
-    
-    var sort = '{'+ s + ':' + b + '}';
-    
-    Genre.getGenres(function(err, genres){
-        if (err){
-            throw err;
-        } 
-    
-        res.json(genres);
-        
-        console.log(sort);
-        
-    }, sort, 0);
-    
-});
-
-app.get ('/api/genres/:sort/:by/:limit', function(req, res){
-    var s = req.params.sort;
-    var b = parseInt(req.params.by);
-    var limit = parseInt(req.params.limit);
-    
-    var sort = '{'+ s + ':' + b + '}';
-    
-    Genre.getGenres(function(err, genres){
-        if (err){
-           throw err;
-        } 
-
-        res.json(genres);
-        
-        console.log(sort);
-        
-    }, sort, limit);
-    
-});*/
 
 app.get ('/api/books', function(req, res){
     Book.getBooks(function(err, books){
